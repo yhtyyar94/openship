@@ -1,0 +1,35 @@
+services:
+  app:
+    build:
+      context: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://openship:openship@db:5432/openship?schema=public
+      SESSION_SECRET: change-this-session-secret-to-at-least-32-characters
+      NEXT_PUBLIC_URL: http://localhost:3000
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: openship
+      POSTGRES_USER: openship
+      POSTGRES_PASSWORD: openship
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U openship -d openship"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
