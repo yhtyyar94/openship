@@ -190,7 +190,9 @@ You can run Openship locally with Docker Compose:
 docker compose up --build
 ```
 
-Compose starts a PostgreSQL database and the app at [http://localhost:3000](http://localhost:3000). On startup, the app container runs `prisma migrate deploy` before starting Next.js.
+Compose starts a PostgreSQL database and the app at [http://localhost:3000](http://localhost:3000). To use a different local port, run `APP_PORT=3001 docker compose up --build`.
+
+On startup, the app container runs `prisma migrate deploy` before starting Next.js.
 
 For production deployments, set a unique `SESSION_SECRET` of at least 32 characters and provide any integration credentials you need, such as `SHOPIFY_APP_KEY`, `SHOPIFY_APP_SECRET`, SMTP settings, and `NEXT_PUBLIC_URL`.
 

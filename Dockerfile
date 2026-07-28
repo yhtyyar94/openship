@@ -1,4 +1,10 @@
-FROM node:20-bookworm-slim AS deps
+FROM node:20-bookworm-slim AS base
+
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends ca-certificates openssl \
+  && rm -rf /var/lib/apt/lists/*
+
+FROM base AS deps
 
 WORKDIR /app
 
@@ -7,7 +13,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 COPY package.json package-lock.json ./
 RUN npm ci
 
-FROM node:20-bookworm-slim AS builder
+FROM base AS builder
 
 WORKDIR /app
 
@@ -19,7 +25,7 @@ COPY . .
 # Build without running migrations; the database is only expected at runtime.
 RUN npx keystone build --no-ui && npx next build
 
-FROM node:20-bookworm-slim AS runner
+FROM base AS runner
 
 WORKDIR /app
 
